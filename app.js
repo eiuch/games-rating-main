@@ -1,28 +1,20 @@
-// ...импорты и настройки
-const http = require('http');
+const express = require('express');
+const path = require('path');
+const bodyParser = require('body-parser');
+const { mainRoute, gamesRouter } = require('./routes');
+const cors = require('./middlewares/cors');
 
-const {defaultRouteController,
-    gameRouteController,
-    mainRouteController,
-    voteRouteController} = require('./controllers');
+const PORT = 3000;
+const app = express();
 
+app.use(
+    cors,
+    bodyParser.json(),
+    express.static(path.join(__dirname, 'public')),
+    mainRoute,
+    gamesRouter
+); 
 
-const server = http.createServer((req, res) => {
-    const url = req.url;
-    switch (url) {
-        case "/":
-            mainRouteController(res, "/index.html", ".html");
-            break;
-        case "/game":
-            gameRouteController(res);
-            break;
-        case "/vote":
-            voteRouteController(req, res);
-            break;
-        default:
-            defaultRouteController(res, url);
-            break;
-    }
-});
-
-server.listen(3005);
+app.listen(PORT, () => {
+    console.log(`Server is running at PORT http://localhost:${PORT}`);
+}) 
